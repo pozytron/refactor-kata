@@ -1,3 +1,4 @@
+
 export function statement(customer=null, movies=null) {
 
     if(customer===null && movies===null){
@@ -7,12 +8,35 @@ export function statement(customer=null, movies=null) {
     let totalAmount = 0;
     let frequentRenterPoints = 0;
     let result = `Rental Record for ${customer.name}\n`;
+
     for (let r of customer.rentals) {
-        let movie = movies[r.movieID];
+        let thisAmount = amountFor(r);
+        //add frequent renter points
+        frequentRenterPoints += frequentRenterPointsFor(r);
+
+        //print figures for this rental
+        result += `\t${movieFor(r).title}\t${thisAmount}\n` ;
+        totalAmount += thisAmount;
+    }
+    // add footer lines
+    result += `Amount owed is ${totalAmount}\n`;
+    result += `You earned ${frequentRenterPoints} frequent renter points\n`;
+
+    return result;
+
+
+    function movieFor(rental) {return movies[rental.movieID];}
+    function frequentRenterPointsFor(r) {
+        let result = 1;
+        // add bonus for a two day new release rental
+        if (movieFor(r).code === "new" && r.days > 2) result++;
+        return result;
+    }
+    function amountFor(r) {
         let thisAmount = 0;
 
         // determine amount for each movie
-        switch (movie.code) {
+        switch (movieFor(r).code) {
             case "regular":
                 thisAmount = 2;
                 if (r.days > 2) {
@@ -29,21 +53,8 @@ export function statement(customer=null, movies=null) {
                 }
                 break;
         }
-
-        //add frequent renter points
-        frequentRenterPoints++;
-        // add bonus for a two day new release rental
-        if(movie.code === "new" && r.days > 2) frequentRenterPoints++;
-
-        //print figures for this rental
-        result += `\t${movie.title}\t${thisAmount}\n` ;
-        totalAmount += thisAmount;
+        return thisAmount;
     }
-    // add footer lines
-    result += `Amount owed is ${totalAmount}\n`;
-    result += `You earned ${frequentRenterPoints} frequent renter points\n`;
-
-    return result;
 }
 
 

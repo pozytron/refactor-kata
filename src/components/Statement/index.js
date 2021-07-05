@@ -4,7 +4,7 @@ import {movies} from "../../data/movies";
 
 
 const Statement = () => {
-    statement(customer,movies)
+    console.log(statement(customer,movies))
     return (
         <>
             <h1>Rental Record for <em>martin</em></h1>
